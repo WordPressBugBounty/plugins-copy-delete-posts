@@ -2,8 +2,8 @@
 Contributors: CopyDeletePosts, copydelete
 Tags: Duplicate post, Copy posts, Copy pages, Duplicate posts, Duplicate pages
 Requires at least: 4.6
-Tested up to: 7.0.2
-Stable tag: 1.5.5
+Tested up to: 7.0.4
+Stable tag: 1.5.6
 License: GPLv3
 Requires PHP: 5.6
 
@@ -177,29 +177,18 @@ Vietnamese: [Sao chép bài đăng, sao chép trang, sao chép bài đăng tùy 
 
 == Changelog ==
 
-= 1.5.5 =
-* Tested up to WordPress 7.0.2
-* [FIX] Prevented unwanted plugin redirects during bulk activation.
-* [FIX] Added permission validation for post copying and deletion actions to improve security.
-* [FIX] Resolved undefined index notices when accessing plugin settings.
-* [FIX] Handled undefined taxonomy keys during post insertion to prevent errors.
-* [FIX] Resolved deprecated null-to-string conversion warnings for improved PHP compatibility.
-* [ENHANCEMENT] Added a default value for the "Take Over Original Slug" option.
-* [MISC] Updated copy button label text for improved clarity.
-
-= 1.5.4 =
-* Tested up to 6.9.4
-* [FIX] Ensure review banner is hidden on excluded pages and sanitize URLs
-* [... and more ...]
+= 1.5.6 =
+* Tested up to WordPress 7.0.4
+* [SECURITY] Strengthened permission validation for post duplication and copy actions.
+* [SECURITY] Improved sanitization of post data and meta fields before output to prevent content disclosure.
+* [FIX] Restricted post copy actions based on user permissions to prevent unauthorized access.
+* [FIX] Improved handling of password-protected posts during duplication to prevent unintended content exposure.
 
 == Upgrade Notice ==
-= 1.5.5 =
-What's new in 1.5.5?
-* Tested up to WordPress 7.0.2
-* [FIX] Prevented unwanted plugin redirects during bulk activation.
-* [FIX] Added permission validation for post copying and deletion actions to improve security.
-* [FIX] Resolved undefined index notices when accessing plugin settings.
-* [FIX] Handled undefined taxonomy keys during post insertion to prevent errors.
-* [FIX] Resolved deprecated null-to-string conversion warnings for improved PHP compatibility.
-* [ENHANCEMENT] Added a default value for the "Take Over Original Slug" option.
-* [MISC] Updated copy button label text for improved clarity.
+= 1.5.6 =
+What's new in 1.5.6?
+* Tested up to WordPress 7.0.4
+* [SECURITY] Strengthened permission validation for post duplication and copy actions.
+* [SECURITY] Improved sanitization of post data and meta fields before output to prevent content disclosure.
+* [FIX] Restricted post copy actions based on user permissions to prevent unauthorized access.
+* [FIX] Improved handling of password-protected posts during duplication to prevent unintended content exposure.

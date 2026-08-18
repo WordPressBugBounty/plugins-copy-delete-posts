@@ -310,7 +310,7 @@ function cdp_insert_new_post($areWePro = false) {
     if (is_array($ids)) {
         $allowed_ids = array();
         foreach ($ids as $id) {
-            if (current_user_can('read_post', $id)) {
+            if (current_user_can('read_post', $id) && (post_password_required($id) == false || current_user_can('edit_post', $id))) {
                 $allowed_ids[] = $id;
             }
         }
@@ -1129,6 +1129,12 @@ function cdp_insert_new_post($areWePro = false) {
     // Main code for this duplication – for each id (post) do whole process
     function cdp_process_ids($ids, $swap, $settings, $times, $site, $areWePro, $g, $isChild = false, $p_ids = null) {
 
+        foreach ($ids as $key => $id) {
+            if (!current_user_can('read_post', $id) || (post_password_required($id) && !current_user_can('edit_post', $id))) {
+                unset($ids[$key]);
+            }
+        }
+
         // Make it clear
         $globals = cdp_default_global_options();
         if ($g != false)
@@ -1363,30 +1369,61 @@ function cdp_get_all_posts() {
     $args = array(
         'numberposts' => -1,
         'post_type' => 'post',
-        'post_status' => 'publish,private,draft,future,pending,inherit,sticky'
+        'post_status' => 'publish,private,draft,future,pending,inherit,sticky',
+        'perm' => 'readable'
     );
 
-    $output['posts'] = get_posts($args);
+    $raw_posts = get_posts($args);
     $args['post_type'] = 'page';
-    $output['pages'] = get_posts($args);
-    $output['custom'] = array();
+    $raw_pages = get_posts($args);
+    $raw_custom = array();
 
     $post_types = get_post_types(array('public' => true, '_builtin' => false));
 
-    if (sizeof($post_types) > 0)
-        $output['custom'] = get_posts(array(
+    if (sizeof($post_types) > 0) {
+        $raw_custom = get_posts(array(
             'post_type' => $post_types,
             'numberposts' => -1,
-            'post_status' => 'publish,private,draft,future,pending,inherit,sticky'
+            'post_status' => 'publish,private,draft,future,pending,inherit,sticky',
+            'perm' => 'readable'
         ));
+    }
 
+    $output['posts'] = array();
+    $output['pages'] = array();
+    $output['custom'] = array();
     $output['meta'] = array();
-    foreach ($output['posts'] as $k => $p)
-        $output['meta'][$p->ID] = get_post_meta($p->ID);
-    foreach ($output['pages'] as $k => $p)
-        $output['meta'][$p->ID] = get_post_meta($p->ID);
-    foreach ($output['custom'] as $k => $p)
-        $output['meta'][$p->ID] = get_post_meta($p->ID);
+
+    $process_posts = function($posts_list) use (&$output) {
+        $filtered = array();
+        foreach ($posts_list as $p) {
+            if (!current_user_can('read_post', $p->ID) || (post_password_required($p) && !current_user_can('edit_post', $p->ID))) {
+                continue;
+            }
+
+            $p->post_password = '';
+            unset($p->post_password);
+
+            $filtered[] = $p;
+
+            $all_meta = get_post_meta($p->ID);
+            $clean_meta = array();
+            if (is_array($all_meta)) {
+                foreach ($all_meta as $key => $val) {
+                    if (is_protected_meta($key, 'post') && strpos($key, '_cdp_') !== 0) {
+                        continue;
+                    }
+                    $clean_meta[$key] = $val;
+                }
+            }
+            $output['meta'][$p->ID] = $clean_meta;
+        }
+        return $filtered;
+    };
+
+    $output['posts'] = $process_posts($raw_posts);
+    $output['pages'] = $process_posts($raw_pages);
+    $output['custom'] = $process_posts($raw_custom);
 
     echo json_encode(cdp_sanitize_array($output));
 }
