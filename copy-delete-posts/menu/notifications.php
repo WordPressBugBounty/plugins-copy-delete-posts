@@ -18,7 +18,9 @@ if (!defined('ABSPATH')) exit;
   function cdp_notifications_menu() {
 
     $current = current_time('timestamp');
-    $cdp_cron = get_option('_cdp_crons', array());
+    $stored_cron = get_option('_cdp_crons', array());
+    $cdp_cron = cdp_filter_cron_tasks($stored_cron);
+    if ($cdp_cron !== $stored_cron) update_option('_cdp_crons', $cdp_cron);
     $sorts = array('done' => array(), 'undone' => array());
     $to_show = 0;
 
@@ -50,7 +52,7 @@ if (!defined('ABSPATH')) exit;
 
     foreach ($sorts['undone'] as $index => $val) {
       $red = (($current - $val['st']) >= 86400) ? true : false;
-      $html .= '<a class="ab-item cdp-dropdown-menu cdp-dd-item cdp-dd-ud' . (($val['s'] == false)?' cdp-bnew-notis':'') . '" data-token="' . $val['t'] . '">
+      $html .= '<a class="ab-item cdp-dropdown-menu cdp-dd-item cdp-dd-ud' . (($val['s'] == false)?' cdp-bnew-notis':'') . '" data-token="' . esc_attr($val['t']) . '">
         <div style="display: block; width: calc(100% - 3px);">
           <div class="cdp-dropdown-left' . (($red)?' cdp-red':'') . '">' . (($val['f'] == 'delete')? __('Deleting Posts', 'copy-delete-posts'):__('Auto Cleaning-up', 'copy-delete-posts')) . '</div>
           <div class="cdp-dropdown-right cdp-noti-kill-btn">' . __('Kill', 'copy-delete-posts') . '</div>
@@ -77,11 +79,11 @@ if (!defined('ABSPATH')) exit;
         if (array_key_exists('formated-date', $val['data'])) $format = $val['data']['formated-date'];
         if (array_key_exists('text', $val['data'])) $ftext = $val['data']['text'];
 
-        if ($ftext != '') $ftext = 'data-ftext="' . $ftext . '" ';
-        if ($format != '') $format = 'data-fdate="Completed at ' . $format . '" ';
+        if ($ftext != '') $ftext = 'data-ftext="' . esc_attr($ftext) . '" ';
+        if ($format != '') $format = 'data-fdate="' . esc_attr('Completed at ' . $format) . '" ';
       }
 
-      $html .= '<a ' . $ftext . $format . 'class="ab-item cdp-dropdown-menu cdp-dd-item cdp-dd-d' . (($val['s'] == false)?' cdp-bnew-notis':'') . '" data-token="' . $val['t'] . '">
+      $html .= '<a ' . $ftext . $format . 'class="ab-item cdp-dropdown-menu cdp-dd-item cdp-dd-d' . (($val['s'] == false)?' cdp-bnew-notis':'') . '" data-token="' . esc_attr($val['t']) . '">
         <div style="display: block; width: calc(100% - 3px);">
           <div class="cdp-dropdown-left">' . (($val['f'] == 'delete')?__('Deleted Posts', 'copy-delete-posts'):__('Auto Cleaned-up', 'copy-delete-posts')) . '</div>
           <div class="cdp-dropdown-right cdp-noti-hide-btn">' . __('Hide', 'copy-delete-posts') . '</div>

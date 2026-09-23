@@ -3,7 +3,7 @@
 /**
  * Plugin Name: Copy & Delete Posts
  * Description: The best solution to easily make duplicates of your posts & pages, and delete them in one go.
- * Version: 1.5.6
+ * Version: 1.5.7
  * Text Domain: copy-delete-posts
  * Author: Inisev
  * Author URI: https://inisev.com
@@ -31,7 +31,7 @@ analyst_init(array(
  * @since 1.0.0
  */
 // Plugin constants
-define('CDP_VERSION', '1.5.6');
+define('CDP_VERSION', '1.5.7');
 define('CDP_WP_VERSION', get_bloginfo('version'));
 define('CDP_SCRIPT_DEBUG', false);
 define('CDP_ROOT_DIR', __DIR__);
@@ -1125,6 +1125,35 @@ function cdp_sanitize_array($data = null) {
     }
 
     return $array;
+}
+
+/** –– * */
+
+/** –– **\
+ * Check whether a notification task token uses the expected safe format.
+ *
+ * @param mixed $token Notification task token.
+ * @return boolean
+ */
+function cdp_is_valid_cron_token($token) {
+    return is_string($token) && preg_match('/^[A-Za-z0-9_\-]+(?:\.[A-Za-z0-9_\-]+)?$/D', $token) === 1;
+}
+
+/** –– **\
+ * Remove notification tasks with invalid tokens or malformed values.
+ *
+ * @param mixed $tasks Notification tasks.
+ * @return array
+ */
+function cdp_filter_cron_tasks($tasks) {
+    if (!is_array($tasks))
+        return array();
+
+    foreach ($tasks as $token => $task)
+        if (!cdp_is_valid_cron_token($token) || !is_array($task))
+            unset($tasks[$token]);
+
+    return $tasks;
 }
 
 /** –– **/

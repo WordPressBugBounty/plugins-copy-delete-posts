@@ -1595,10 +1595,15 @@ function cdp_set_noti_as_seen() {
     if (wp_doing_cron())
         return;
 
-    $token = ((isset($_POST['noti_token'])) ? sanitize_text_field($_POST['noti_token']) : false);
-    $cdp_cron = get_option('_cdp_crons', array());
-    $cdp_cron[$token]['shown'] = true;
-    update_option('_cdp_crons', $cdp_cron);
+    $token = ((isset($_POST['noti_token']) && is_string($_POST['noti_token'])) ? sanitize_text_field(wp_unslash($_POST['noti_token'])) : false);
+    $stored_cron = get_option('_cdp_crons', array());
+    $cdp_cron = cdp_filter_cron_tasks($stored_cron);
+
+    if ($token !== false && cdp_is_valid_cron_token($token) && array_key_exists($token, $cdp_cron))
+        $cdp_cron[$token]['shown'] = true;
+
+    if ($cdp_cron !== $stored_cron)
+        update_option('_cdp_crons', $cdp_cron);
 
     echo json_encode(array('status' => 'success'));
 }
@@ -1667,7 +1672,11 @@ function cdp_just_kill_task() {
  * @return object of tasks or fail
  */
 function cdp_just_get_tasks() {
-    $cdp_cron = get_option('_cdp_crons', false);
+    $stored_cron = get_option('_cdp_crons', false);
+    $cdp_cron = cdp_filter_cron_tasks($stored_cron);
+
+    if ($stored_cron !== false && $cdp_cron !== $stored_cron)
+        update_option('_cdp_crons', $cdp_cron);
 
     if ($cdp_cron)
         echo json_encode(array('status' => 'success', 'tasks' => cdp_sanitize_array($cdp_cron)));

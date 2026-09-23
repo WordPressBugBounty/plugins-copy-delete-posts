@@ -2,8 +2,8 @@
 Contributors: CopyDeletePosts, copydelete
 Tags: Duplicate post, Copy posts, Copy pages, Duplicate posts, Duplicate pages
 Requires at least: 4.6
-Tested up to: 7.0.4
-Stable tag: 1.5.6
+Tested up to: 7.1.2
+Stable tag: 1.5.7
 License: GPLv3
 Requires PHP: 5.6
 
@@ -177,18 +177,12 @@ Vietnamese: [Sao chép bài đăng, sao chép trang, sao chép bài đăng tùy 
 
 == Changelog ==
 
-= 1.5.6 =
-* Tested up to WordPress 7.0.4
-* [SECURITY] Strengthened permission validation for post duplication and copy actions.
-* [SECURITY] Improved sanitization of post data and meta fields before output to prevent content disclosure.
-* [FIX] Restricted post copy actions based on user permissions to prevent unauthorized access.
-* [FIX] Improved handling of password-protected posts during duplication to prevent unintended content exposure.
+= 1.5.7 =
+* Tested up to WordPress 7.1.2
+* [SECURITY] Fixed stored XSS vulnerability in notifications by properly securing task token output.
 
 == Upgrade Notice ==
-= 1.5.6 =
-What's new in 1.5.6?
-* Tested up to WordPress 7.0.4
-* [SECURITY] Strengthened permission validation for post duplication and copy actions.
-* [SECURITY] Improved sanitization of post data and meta fields before output to prevent content disclosure.
-* [FIX] Restricted post copy actions based on user permissions to prevent unauthorized access.
-* [FIX] Improved handling of password-protected posts during duplication to prevent unintended content exposure.
+= 1.5.7 =
+What's new in 1.5.7?
+* Tested up to WordPress 7.1.2
+* [SECURITY] Fixed stored XSS vulnerability in notifications by properly securing task token output.
